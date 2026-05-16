@@ -22,35 +22,8 @@ fn main() -> io::Result<()> {
     let players = nums.next().expect("missing number of players");
     println!("decks: {}, players: {}\n", decks, players);
 
-    let mut deck = Deck::new();
-
-    let print_deck = |deck: &Deck| {
-        let deck_size = deck.get_cards().len();
-        for (i, card) in deck.get_cards().iter().enumerate() {
-            if i % 13 == 0 {
-                println!();
-            }
-            if i + 1 == deck_size {
-                print!("{card} ");
-            } else {
-                print!("{card} ");
-            }
-        }
-        println!();
-    };
-
-    print_deck(&deck);
-    println!("\nShuffling the deck...");
-    deck.shuffle();
-
-    print_deck(&deck);
-    print!(
-        "\nDealing 3 cards: {} {} {}",
-        deck.deal().expect("deck is empty"),
-        deck.deal().expect("deck is empty"),
-        deck.deal().expect("deck is empty")
-    );
-    print_deck(&deck);
+    // let's actually play the game now
+    game::play();
 
     Ok(())
 }
