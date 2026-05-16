@@ -8,7 +8,7 @@ pub enum Suit {
     Spades,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Hash)]
 pub enum Rank {
     Two,
     Three,

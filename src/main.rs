@@ -1,6 +1,7 @@
 mod card;
 mod deck;
 mod evaluator;
+mod game;
 
 use std::fs;
 use std::io;

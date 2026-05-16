@@ -9,6 +9,9 @@ pub struct Deck {
 }
 
 impl Deck {
+    pub fn empty(&self) -> bool {
+        self.cards.is_empty()
+    }
     pub fn get_cards(&self) -> &[Card] {
         &self.cards
     }
