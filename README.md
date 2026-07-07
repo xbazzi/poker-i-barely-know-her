@@ -1,4 +1,4 @@
-# poker-i-barely-know-her
+# Poker? I barely know her...
 
 A Texas Hold'em poker simulator written in Rust. Deals hole cards and community cards, evaluates the best 5-card hand from 7, and declares a winner.
 
