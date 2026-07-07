@@ -6,13 +6,7 @@ mod game;
 use std::fs;
 use std::io;
 
-use crate::{
-    card::{Card, Rank, Suit},
-    deck::Deck,
-};
-
 fn main() -> io::Result<()> {
-    // pro way
     let contents = fs::read_to_string("odds.txt").expect("failed to read file");
     let mut nums = contents
         .split_whitespace()

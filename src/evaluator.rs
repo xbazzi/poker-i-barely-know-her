@@ -1,5 +1,9 @@
-use crate::card::{Card, Rank};
+use crate::{
+    card::{Card, Rank},
+    game::Hand,
+};
 use std::collections::HashMap;
+use std::fmt;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum HandRank {
@@ -15,7 +19,31 @@ pub enum HandRank {
     RoyalFlush,
 }
 
-pub fn best_hand(cards: &[Card; 7]) -> HandRank {
+impl fmt::Display for HandRank {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            HandRank::RoyalFlush => write!(f, "Royal Flush"),
+            HandRank::StraightFlush(r) => write!(f, "Straight Flush, {} high", r),
+            HandRank::FourOfAKind(r, _) => write!(f, "Four of a Kind, {}s", r),
+            HandRank::FullHouse(trip, pair) => write!(f, "Full House, {}s full of {}s", trip, pair),
+            HandRank::Flush(r, ..) => write!(f, "Flush, {} high", r),
+            HandRank::Straight(r) => write!(f, "Straight, {} high", r),
+            HandRank::ThreeOfAKind(r, ..) => write!(f, "Three of a Kind, {}s", r),
+            HandRank::TwoPair(p1, p2, _) => write!(f, "Two Pair, {}s and {}s", p1, p2),
+            HandRank::OnePair(r, ..) => write!(f, "Pair of {}s", r),
+            HandRank::HighCard(r, ..) => write!(f, "High Card, {}", r),
+        }
+    }
+}
+
+pub fn best_hand(player_hand: &Hand, community_hand: &Hand) -> HandRank {
+    let player_cards = player_hand.get_cards();
+    let community_cards = community_hand.get_cards();
+    let cards = player_cards
+        .iter()
+        .chain(community_cards.iter())
+        .copied()
+        .collect::<Vec<Card>>();
     let size = cards.len();
     let mut best: Option<HandRank> = None;
     for i in 0..size {
@@ -29,7 +57,7 @@ pub fn best_hand(cards: &[Card; 7]) -> HandRank {
                 .try_into()
                 .unwrap();
             let rank = evaluate(&hand);
-            if best.as_ref().map_or(true, |b| &rank > b) {
+            if best.as_ref().is_none_or(|b| &rank > b) {
                 best = Some(rank);
             }
         }
@@ -48,24 +76,24 @@ pub fn evaluate(cards: &[Card; 5]) -> HandRank {
 
     if flush && straight {
         if ranks[0] == Rank::Ace && !is_wheel {
-            return HandRank::RoyalFlush;
+            HandRank::RoyalFlush
         } else if !is_wheel {
-            return HandRank::StraightFlush(ranks[0]);
+            HandRank::StraightFlush(ranks[0])
         } else {
-            return HandRank::StraightFlush(Rank::Five);
+            HandRank::StraightFlush(Rank::Five)
         }
     } else if flush {
         if let [r0, r1, r2, r3, r4] = ranks.as_slice() {
-            return HandRank::Flush(*r0, *r1, *r2, *r3, *r4);
+            HandRank::Flush(*r0, *r1, *r2, *r3, *r4)
         } else {
             unreachable!();
         }
     } else if straight {
         if !is_wheel {
-            return HandRank::Straight(ranks[0]);
+            HandRank::Straight(ranks[0])
         } else {
-            return HandRank::Straight(Rank::Five);
-        };
+            HandRank::Straight(Rank::Five)
+        }
     } else {
         let counts = rank_counts(&ranks);
         match counts.as_slice() {

@@ -1,7 +1,7 @@
 use crate::{
     card::Card,
     deck::Deck,
-    evaluator::{HandRank, best_hand},
+    evaluator::best_hand,
 };
 use std::fmt;
 
@@ -14,22 +14,21 @@ pub struct Hand {
     cards: Vec<Card>,
 }
 
+#[derive(Default)]
 pub struct Player {
     hand: Hand,
+}
+
+impl Hand {
+    pub fn get_cards(&self) -> &[Card] {
+        &self.cards
+    }
 }
 
 impl Default for Hand {
     fn default() -> Self {
         Self {
             cards: Vec::with_capacity(PLAYER_HAND_CAPACITY),
-        }
-    }
-}
-
-impl Default for Player {
-    fn default() -> Self {
-        Self {
-            hand: Hand::default(),
         }
     }
 }
@@ -94,7 +93,7 @@ pub fn play() {
     deck.deal();
     if let Some(card) = deck.deal() {
         community_hand.cards.push(card);
-        print!("Turn: {}\n", card);
+        println!("Turn: {}", card);
     }
 
     // deal the river
@@ -104,5 +103,18 @@ pub fn play() {
         println!("River: {}", card);
     }
 
-    // let winning_hand = best_hand(player_hand.as_slice());
+    println!("Opponent's hand: {}", players[1].hand);
+    println!();
+    println!();
+    println!();
+    println!();
+    println!();
+
+    let player_best = best_hand(&players[0].hand, &community_hand);
+    let ai_best = best_hand(&players[1].hand, &community_hand);
+    if player_best > ai_best {
+        println!("You win with {}", player_best);
+    } else {
+        println!("\t\t\tOpponent wins with {}", ai_best);
+    }
 }
