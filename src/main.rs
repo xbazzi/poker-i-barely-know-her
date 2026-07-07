@@ -7,7 +7,7 @@ use std::fs;
 use std::io;
 
 fn main() -> io::Result<()> {
-    let contents = fs::read_to_string("odds.txt").expect("failed to read file");
+    let contents = fs::read_to_string("game_config.txt").expect("failed to read file");
     let mut nums = contents
         .split_whitespace()
         .map(|s| s.parse::<u32>().expect("expected a number, phahm"));
